@@ -29,7 +29,7 @@ window/stretch/aspect="keep_height"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/sprite_trail/plugin.cfg" )
+enabled=PoolStringArray(  )
 
 [importer_defaults]
 
