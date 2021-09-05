@@ -1,6 +1,6 @@
 extends KinematicBody2D
 
-export var jumpImpulse= 10.5 * 60
+export var jumpImpulse= 4 * 60
 export var gravityImpulse :=8.0 *60
 export var spd= 3.0 *60
 var dir: =0.0
