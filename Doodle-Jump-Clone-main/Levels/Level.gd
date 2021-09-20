@@ -1,16 +1,17 @@
 extends Node2D
 
-onready var width := get_viewport_rect().size.x
-onready var height := get_viewport_rect().size.y
+onready var width = Global.width
+onready var height = Global.height
 
 var platform :=preload("res://Levels/objects/Platform.tscn")
 
-var platformCount:=5
+var platformCount:=20
 onready var player:= $Player
 onready var platformParent:= $Platforms
 var platforms:=[]
-onready var treshold=height*0.5
-var scrollSpeed=0.05
+onready var treshold=height*.5
+onready var platRange = $"Player/PlatformDeleter".position.y - $"Player/PlatformSpawner".position.y
+var scrollSpeed=.1
 onready var background:Sprite= $"ParallaxBackground/ParallaxLayer/Sprite"
 
 func _ready()-> void:
@@ -18,31 +19,28 @@ func _ready()-> void:
 	player.global_position.y=treshold
 	for i in platformCount:
 		var inst:= platform.instance()
-		inst.global_position.y=height/platformCount*i
+		inst.global_position.y=platRange/platformCount*i
 		inst.global_position.x=rand_x()
 		platformParent.add_child(inst)
 		platforms.append(inst)
 	player.global_position.x=rand_x()
-	platforms.back().global_position.x=player.global_position.x
+	platforms.back().global_position=player.global_position+Vector2(-10,10)
 	
 func rand_x()->float:
-	return rand_range(28.0, width-28.0)
-	
+	return rand_range(Global.centre.x-200, Global.centre.x + 200)
+	#return rand_range(28.0, width-28.0)
+
+func moveAll(move):
+	pass
+
 func _physics_process(delta:float)-> void:
-	if player.global_position.y <treshold:
-		var move:float =lerp(0.0, treshold-player.global_position.y, scrollSpeed)
-		move_background(move)
-		player.global_position.y+=move
-		for plat in platforms:
-			plat.global_position.y +=move
-			if plat.global_position.y>height:
-				plat.global_position.y -=height
-				plat.global_position.x=rand_x()
-	if player.global_position.y > height:
-		game_over()	
+	for platform in $Player/PlatformDeleter.get_overlapping_bodies():
+		platform.position.y = $Player/PlatformSpawner.global_position.y
+	pass
+		
 func move_background(move:float)-> void:
-	var ratio :=0.75
-	background.global_position.y=fmod((background.global_position.y+height+move*ratio), height)-height
+	var ratio :=0.25
+	background.global_position.y+=1
 
 func game_over()-> void:
 	get_tree().reload_current_scene()
